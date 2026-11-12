@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BLEACH // SOUL SOCIETY ARCHIVE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Noto+Serif+JP:wght@900&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Reiatsu particle canvas -->
+    <canvas id="reiatsu-canvas"></canvas>
+
+    <!-- Bankai Impact FX Layers -->
+    <div class="impact-invert"></div>
+    <div class="slash-flash"></div>
+    <div class="slash-line slash-1"></div>
+    <div class="slash-line slash-2"></div>
+    <div class="shockwave-ring"></div>
+
+    <!-- Top tactical HUD -->
+    <nav class="hud-nav">
+        <div class="logo">護廷十三隊 // <span>GOTEI 13</span></div>
+        <div class="status" id="reiatsu-status">REIATSU: STABLE</div>
+    </nav>
+
+    <!-- Main Hero Section -->
+    <main class="hero">
+        <div class="kanji-bg" id="kanji-bg">死神</div>
+        <img src="img/ichigo.png.jpg" alt="Character Render" class="hero-render" id="hero-render">
+
+        <div class="hero-content">
+            <p class="eyebrow" id="eyebrow-text">THOUSAND-YEAR BLOOD WAR</p>
+            <h1 class="glitch-title" id="main-title" data-text="BLEACH">BLEACH</h1>
+            <p class="quote" id="quote-text">"If you give me a sword, I will protect. If you don't give me one, I cannot protect."</p>
+
+            <div class="controls">
+                <button id="btn-bankai" class="cyber-btn">
+                    <span>卍解 // RELEASE BANKAI</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Interactive Captain Cards -->
+        <section class="cards-container">
+            <div class="char-card active-card" data-kanji="斬" data-img="img/ichigo.png.jpg" data-quote="TENSA ZANGETSU — ABSOLUTE SPEED AND DARKNESS">
+                <span class="card-num">01</span>
+                <h3>ICHIGO KUROSAKI</h3>
+                <p>Substitute Shinigami</p>
+            </div>
+            <div class="char-card" data-kanji="氷" data-img="img/hitsugaya.png.jpg" data-quote="DAIGUREN HYŌRINMARU — THE FROZEN HEAVENS">
+                <span class="card-num">10</span>
+                <h3>TŌSHIRŌ HITSUGAYA</h3>
+                <p>10th Division Captain</p>
+            </div>
+            <div class="char-card" data-kanji="桜" data-img="img/byakuya.png.jpg" data-quote="SENBONZAKURA KAGEYOSHI — A THOUSAND BLADES OF STEEL">
+                <span class="card-num">06</span>
+                <h3>BYAKUYA KUCHIKI</h3>
+                <p>6th Division Captain</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- GSAP Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
