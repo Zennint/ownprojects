@@ -9,8 +9,15 @@
 </head>
 <body>
 
-    <!-- Reiatsu particle canvas -->
+    <!-- Reiatsu / Snow Particle Canvas -->
     <canvas id="reiatsu-canvas"></canvas>
+
+    <!-- Fullscreen Video Overlay for Rukia's Bankai -->
+    <div class="video-overlay" id="video-overlay">
+        <div class="video-frost-flash" id="video-frost-flash"></div>
+        <video id="rukia-video" src="video/rukia-bankai.mp4" playsinline preload="auto"></video>
+        <button id="skip-video" class="skip-btn">SKIP CUTSCENE // ⏭</button>
+    </div>
 
     <!-- Bankai Impact FX Layers -->
     <div class="impact-invert"></div>
@@ -18,15 +25,21 @@
     <div class="slash-line slash-1"></div>
     <div class="slash-line slash-2"></div>
     <div class="shockwave-ring"></div>
+    <div class="frost-vignette"></div>
 
-    <!-- Top tactical HUD -->
+    <!-- Top Tactical HUD -->
     <nav class="hud-nav">
         <div class="logo">護廷十三隊 // <span>GOTEI 13</span></div>
+        <div class="nav-links">
+            <a href="#hero-section">01 // OVERVIEW</a>
+            <a href="#lore-section">02 // ZANPAKUTŌ</a>
+            <a href="#roster-section">03 // DIVISIONS</a>
+        </div>
         <div class="status" id="reiatsu-status">REIATSU: STABLE</div>
     </nav>
 
-    <!-- Main Hero Section -->
-    <main class="hero">
+    <!-- SECTION 1: HERO -->
+    <main class="hero" id="hero-section">
         <div class="kanji-bg" id="kanji-bg">死神</div>
         <img src="img/ichigo.png.jpg" alt="Character Render" class="hero-render" id="hero-render">
 
@@ -39,11 +52,14 @@
                 <button id="btn-bankai" class="cyber-btn">
                     <span>卍解 // RELEASE BANKAI</span>
                 </button>
+                <button id="btn-rukia" class="cyber-btn ice-btn">
+                    <span>白霞罸 // HAKKA NO TOGAME</span>
+                </button>
             </div>
         </div>
 
-        <!-- Interactive Captain Cards -->
-        <section class="cards-container">
+        <!-- STANDARD ROSTER CARDS (ICHIGO / HITSUGAYA / BYAKUYA) -->
+        <section class="cards-container" id="standard-roster">
             <div class="char-card active-card" data-kanji="斬" data-img="img/ichigo.png.jpg" data-quote="TENSA ZANGETSU — ABSOLUTE SPEED AND DARKNESS">
                 <span class="card-num">01</span>
                 <h3>ICHIGO KUROSAKI</h3>
@@ -60,10 +76,103 @@
                 <p>6th Division Captain</p>
             </div>
         </section>
+
+        <!-- ICONIC ROSTER CARDS FOR HAKKA NO TOGAME (RUKIA / KENPACHI / AIZEN) -->
+        <section class="cards-container hidden-roster" id="iconic-roster">
+            <div class="char-card active-card" data-kanji="氷" data-img="img/Rukia.jpg" data-quote="HAKKA NO TOGAME — EVERYTHING WITHIN THE MIST FREEZES TO DUST">
+                <span class="card-num">13</span>
+                <h3>RUKIA KUCHIKI</h3>
+                <p>Hakka no Togame // Absolute Zero</p>
+            </div>
+            <div class="char-card" data-kanji="鬼" data-img="img/Kenpachi.jpg" data-quote="NOZARASHI — THERE IS NOTHING I CANNOT CUT">
+                <span class="card-num">11</span>
+                <h3>KENPACHI ZARAKI</h3>
+                <p>The First Kenpachi // Demon</p>
+            </div>
+            <div class="char-card" data-kanji="鏡" data-img="img/Aizen.jpg" data-quote="KYŌKA SUIGETSU — ALL CREATION IS UNDER MY ILLUSION">
+                <span class="card-num">05</span>
+                <h3>SŌSUKE AIZEN</h3>
+                <p>Transcendent Soul King Candidate</p>
+            </div>
+        </section>
     </main>
 
-    <!-- GSAP Library -->
+    <!-- SECTION 2: ZANPAKUTŌ & SPIRITUAL PRESSURE ARCHIVE -->
+    <section class="content-section lore-section" id="lore-section">
+        <div class="section-header reveal-up">
+            <span class="section-tag">ARCHIVE // 02</span>
+            <h2>THE ESSENCE OF ZANPAKUTŌ</h2>
+        </div>
+
+        <div class="lore-grid">
+            <div class="lore-text reveal-up">
+                <p class="lead">Every Shinigami carries a soul-cutter forged from their own spiritual essence. Mastering its true name unlocks two stages of liberation: <strong>Shikai</strong> and the ultimate manifestation, <strong>Bankai</strong>.</p>
+                <p class="sub-desc">Achieving Bankai multiplies a Captain's combat capability by five to ten times, reshaping the surrounding atmosphere with raw Reiatsu.</p>
+                
+                <div class="stats-box">
+                    <div class="stat-row">
+                        <div class="stat-label"><span>SPIRITUAL DENSITY</span><span>98%</span></div>
+                        <div class="stat-bar"><div class="stat-fill" data-width="98%"></div></div>
+                    </div>
+                    <div class="stat-row">
+                        <div class="stat-label"><span>ZERO-DEGREE THRESHOLD</span><span>-273.15°C</span></div>
+                        <div class="stat-bar"><div class="stat-fill" data-width="92%"></div></div>
+                    </div>
+                    <div class="stat-row">
+                        <div class="stat-label"><span>SHUNPO VELOCITY</span><span>MAX</span></div>
+                        <div class="stat-bar"><div class="stat-fill" data-width="95%"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lore-visual reveal-up">
+                <div class="tactical-frame">
+                    <div class="kanji-emblem">卍解</div>
+                    <h3>FINAL LIBERATION</h3>
+                    <p>SOUL SOCIETY CLASSIFIED RECORD // LEVEL 1 CLEARANCE</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: GOTEI 13 DIVISION ROSTER -->
+    <section class="content-section roster-section" id="roster-section">
+        <div class="section-header reveal-up">
+            <span class="section-tag">ARCHIVE // 03</span>
+            <h2>GOTEI 13 // COMBAT LOGS</h2>
+        </div>
+
+        <div class="divisions-grid">
+            <div class="div-box reveal-up">
+                <span class="div-code">1ST DIVISION</span>
+                <h3>GENRYŪSAI YAMAMOTO</h3>
+                <p class="zanpakuto">Zanka no Tachi — Flames of the Eastern Sun</p>
+            </div>
+            <div class="div-box reveal-up">
+                <span class="div-code">11TH DIVISION</span>
+                <h3>KENPACHI ZARAKI</h3>
+                <p class="zanpakuto">Nozarashi — The Unfettered Beast of Combat</p>
+            </div>
+            <div class="div-box reveal-up">
+                <span class="div-code">13TH DIVISION</span>
+                <h3>RUKIA KUCHIKI</h3>
+                <p class="zanpakuto">Hakka no Togame — Mist of White Haze</p>
+            </div>
+            <div class="div-box reveal-up">
+                <span class="div-code">5TH DIVISION [EX]</span>
+                <h3>SŌSUKE AIZEN</h3>
+                <p class="zanpakuto">Kyōka Suigetsu — Complete Hypnosis</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="site-footer">
+        <p>SOUL SOCIETY TACTICAL INTERFACE // BLEACH ARCHIVE PROJECT</p>
+    </footer>
+
+    <!-- GSAP + ScrollTrigger Plugin -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

@@ -9,6 +9,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    scroll-behavior: smooth;
 }
 
 body {
@@ -17,18 +18,101 @@ body {
     font-family: 'Syne', sans-serif;
     overflow-x: hidden;
     min-height: 100vh;
-    transition: background-color 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: background-color 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Background Particle Canvas */
+/* Particle Canvas */
 #reiatsu-canvas {
     position: fixed;
-    top: 0;
-    left: 0;
+    inset: 0;
     width: 100%;
     height: 100%;
     z-index: 0;
     pointer-events: none;
+}
+
+/* --- FLOATING ETHEREAL VIDEO OVERLAY WITH SOFT EDGE FADE --- */
+.video-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 8, 18, 0.82);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    z-index: 999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.video-overlay.active {
+    pointer-events: all;
+}
+
+.video-frost-flash {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.85) 5%, rgba(125, 211, 252, 0.4) 50%, transparent 90%);
+    opacity: 0;
+    z-index: 1001;
+    pointer-events: none;
+}
+
+.video-overlay video {
+    width: 82vw;
+    max-width: 1150px;
+    height: 72vh;
+    object-fit: cover;
+    transform: scale(0.75);
+    filter: brightness(1.06) contrast(1.08);
+    /* Soft fade on top, bottom, and sides so it feels like a fleeting vision */
+    -webkit-mask-image: 
+        linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%),
+        linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-image: 
+        linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%),
+        linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%);
+    mask-composite: intersect;
+}
+
+.skip-btn {
+    position: absolute;
+    bottom: 40px;
+    right: 50px;
+    padding: 12px 28px;
+    background: rgba(2, 12, 24, 0.75);
+    color: #e0f2fe;
+    border: 1px solid rgba(125, 211, 252, 0.5);
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    letter-spacing: 2px;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    z-index: 1002;
+    transition: 0.3s;
+}
+
+.skip-btn:hover {
+    background: #7dd3fc;
+    color: #020813;
+}
+
+/* --- FROST VIGNETTE (RUKIA BANKAI) --- */
+.frost-vignette {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 4;
+    opacity: 0;
+    box-shadow: inset 0 0 150px 50px rgba(165, 243, 252, 0.48);
+    transition: opacity 0.8s ease;
+}
+
+body.rukia-mode .frost-vignette {
+    opacity: 1;
 }
 
 /* --- BANKAI IMPACT FX --- */
@@ -64,14 +148,8 @@ body {
     z-index: 100;
 }
 
-.slash-1 {
-    transform: rotate(-20deg) scaleX(0);
-}
-
-.slash-2 {
-    transform: rotate(22deg) scaleX(0);
-    transform-origin: right;
-}
+.slash-1 { transform: rotate(-20deg) scaleX(0); }
+.slash-2 { transform: rotate(22deg) scaleX(0); transform-origin: right; }
 
 .shockwave-ring {
     position: fixed;
@@ -88,28 +166,39 @@ body {
     z-index: 98;
 }
 
-/* Top HUD */
+/* --- TOP HUD --- */
 .hud-nav {
     position: fixed;
     top: 0;
     width: 100%;
-    padding: 25px 50px;
+    padding: 22px 50px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    z-index: 20;
-    font-size: 0.85rem;
+    z-index: 30;
+    font-size: 0.82rem;
     letter-spacing: 3px;
     border-bottom: 1px solid var(--border-color);
-    background: rgba(6, 6, 8, 0.75);
+    background: rgba(6, 6, 8, 0.8);
     backdrop-filter: blur(12px);
 }
 
-.hud-nav span {
-    color: var(--accent);
+.hud-nav span { color: var(--accent); }
+
+.nav-links {
+    display: flex;
+    gap: 30px;
 }
 
-/* Giant Background Kanji */
+.nav-links a {
+    color: #a0a0ab;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.nav-links a:hover { color: var(--accent); }
+
+/* --- BACKGROUND KANJI & CHARACTER RENDER --- */
 .kanji-bg {
     position: fixed;
     top: 50%;
@@ -124,7 +213,6 @@ body {
     transition: color 0.5s ease;
 }
 
-/* Character Render - Low opacity & smooth fade out */
 .hero-render {
     position: fixed;
     right: -1%;
@@ -136,22 +224,22 @@ body {
     z-index: 1;
     pointer-events: none;
     opacity: 0.65;
+    mix-blend-mode: lighten;
     filter: drop-shadow(0 0 30px rgba(0, 0, 0, 0.95));
-    mask-image: linear-gradient(to left, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 100%), 
-                linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%);
-    mask-composite: intersect;
-    -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 100%), 
-                        linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%);
-    -webkit-mask-composite: source-in;
+    -webkit-mask-image: linear-gradient(to left, black 45%, transparent 100%);
+    mask-image: linear-gradient(to left, black 45%, transparent 100%);
     transition: filter 0.5s ease;
 }
 
-/* Aura glow on character when Bankai is active */
 body.bankai-mode .hero-render {
     filter: drop-shadow(0 0 35px rgba(255, 0, 43, 0.65)) contrast(1.15);
 }
 
-/* Main Content */
+body.rukia-mode .hero-render {
+    filter: drop-shadow(0 0 40px rgba(125, 211, 252, 0.85)) brightness(1.1);
+}
+
+/* --- HERO SECTION --- */
 .hero {
     position: relative;
     z-index: 10;
@@ -163,7 +251,7 @@ body.bankai-mode .hero-render {
 }
 
 .hero-content {
-    max-width: 54%;
+    max-width: 58%;
     margin: auto 0;
     position: relative;
     z-index: 12;
@@ -179,7 +267,7 @@ body.bankai-mode .hero-render {
 
 .glitch-title {
     font-family: 'Cinzel', serif;
-    font-size: clamp(4.5rem, 11vw, 9.5rem);
+    font-size: clamp(4.2rem, 10.5vw, 9rem);
     font-weight: 900;
     line-height: 0.9;
     letter-spacing: 15px;
@@ -192,26 +280,36 @@ body.bankai-mode .glitch-title {
     text-shadow: 0 0 35px rgba(255, 0, 43, 0.8), -4px 0 #ff002b, 4px 0 #ffffff;
 }
 
+body.rukia-mode .glitch-title {
+    text-shadow: 0 0 40px rgba(125, 211, 252, 0.95), 0 0 15px #ffffff;
+}
+
 .quote {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     color: #c4c4ce;
-    max-width: 550px;
+    max-width: 560px;
     line-height: 1.6;
-    margin-bottom: 40px;
+    margin-bottom: 35px;
     border-left: 3px solid var(--accent);
     padding-left: 15px;
 }
 
-/* Diagonal Cut Button */
+/* --- DUAL BANKAI BUTTONS --- */
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+}
+
 .cyber-btn {
     position: relative;
-    padding: 18px 45px;
+    padding: 16px 32px;
     background: var(--accent);
     color: #000000;
     font-family: 'Syne', sans-serif;
     font-weight: 800;
-    font-size: 1rem;
-    letter-spacing: 3px;
+    font-size: 0.92rem;
+    letter-spacing: 2px;
     border: none;
     cursor: pointer;
     clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
@@ -219,12 +317,25 @@ body.bankai-mode .glitch-title {
 }
 
 .cyber-btn:hover {
-    transform: translateY(-3px) scale(1.04);
+    transform: translateY(-3px) scale(1.03);
     background: #ffffff;
-    box-shadow: 0 10px 35px rgba(255, 77, 0, 0.55);
+    box-shadow: 0 10px 35px rgba(255, 255, 255, 0.35);
 }
 
-/* Bottom Cards - Full solid opacity & high contrast */
+.ice-btn {
+    background: transparent;
+    color: #7dd3fc;
+    border: 2px solid #7dd3fc;
+    clip-path: none;
+}
+
+.ice-btn:hover {
+    background: #7dd3fc;
+    color: #020813;
+    box-shadow: 0 0 30px rgba(125, 211, 252, 0.7);
+}
+
+/* --- CHARACTER CARDS --- */
 .cards-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -234,8 +345,12 @@ body.bankai-mode .glitch-title {
     z-index: 15;
 }
 
+.hidden-roster {
+    display: none;
+}
+
 .char-card {
-    background: rgba(12, 12, 16, 0.92); /* Solid dark background so image never bleeds through */
+    background: rgba(12, 12, 16, 0.92);
     opacity: 1 !important;
     border: 1px solid var(--border-color);
     padding: 25px;
@@ -250,27 +365,6 @@ body.bankai-mode .glitch-title {
 .char-card:hover, .char-card.active-card {
     border-color: var(--accent);
     transform: translateY(-8px);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.8), 0 0 15px rgba(255, 77, 0, 0.2);
-}
-
-body.bankai-mode .char-card:hover, 
-body.bankai-mode .char-card.active-card {
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.9), 0 0 20px rgba(255, 0, 43, 0.35);
-}
-
-.char-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.14), transparent);
-    transition: 0.5s;
-}
-
-.char-card:hover::before {
-    left: 100%;
 }
 
 .card-num {
@@ -282,14 +376,148 @@ body.bankai-mode .char-card.active-card {
     margin-bottom: 10px;
 }
 
-.char-card h3 {
-    font-size: 1.25rem;
-    color: #ffffff;
-    letter-spacing: 1px;
-    margin-bottom: 5px;
+.char-card h3 { font-size: 1.25rem; color: #ffffff; margin-bottom: 5px; }
+.char-card p { font-size: 0.85rem; color: #a0a0ab; }
+
+/* --- SCROLLABLE CONTENT SECTIONS --- */
+.content-section {
+    position: relative;
+    z-index: 12;
+    padding: 120px 50px;
+    border-top: 1px solid var(--border-color);
+    background: linear-gradient(to bottom, rgba(6,6,8,0.85), rgba(6,6,8,0.96));
+    backdrop-filter: blur(10px);
 }
 
-.char-card p {
+.section-header {
+    margin-bottom: 60px;
+}
+
+.section-tag {
+    color: var(--accent);
+    letter-spacing: 4px;
     font-size: 0.85rem;
-    color: #a0a0ab;
+    font-weight: 800;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.section-header h2 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(2.2rem, 5vw, 3.8rem);
+    letter-spacing: 6px;
+}
+
+.lore-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 60px;
+    align-items: center;
+}
+
+.lead {
+    font-size: 1.35rem;
+    line-height: 1.7;
+    margin-bottom: 20px;
+}
+
+.lead strong { color: var(--accent); }
+
+.sub-desc {
+    color: #9ca3af;
+    line-height: 1.7;
+    margin-bottom: 40px;
+}
+
+.stats-box {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.stat-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+}
+
+.stat-bar {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+}
+
+.stat-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--accent);
+    box-shadow: 0 0 15px var(--accent);
+}
+
+.tactical-frame {
+    border: 1px solid var(--accent);
+    padding: 50px 30px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.02);
+    position: relative;
+}
+
+.kanji-emblem {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 6rem;
+    color: var(--accent);
+    margin-bottom: 15px;
+}
+
+.tactical-frame h3 { letter-spacing: 4px; margin-bottom: 10px; }
+.tactical-frame p { font-size: 0.8rem; color: #888; letter-spacing: 2px; }
+
+.divisions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 25px;
+}
+
+.div-box {
+    background: rgba(15, 15, 20, 0.9);
+    border: 1px solid var(--border-color);
+    padding: 35px 25px;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.div-box:hover {
+    transform: translateY(-8px);
+    border-color: var(--accent);
+}
+
+.div-code {
+    color: var(--accent);
+    font-size: 0.8rem;
+    letter-spacing: 3px;
+    display: block;
+    margin-bottom: 12px;
+}
+
+.div-box h3 { font-size: 1.3rem; margin-bottom: 10px; }
+.zanpakuto { font-size: 0.9rem; color: #a0a0ab; }
+
+.site-footer {
+    position: relative;
+    z-index: 12;
+    text-align: center;
+    padding: 40px;
+    border-top: 1px solid var(--border-color);
+    background: #040406;
+    font-size: 0.8rem;
+    letter-spacing: 3px;
+    color: #6b7280;
+}
+
+@media (max-width: 900px) {
+    .lore-grid { grid-template-columns: 1fr; }
+    .hero-content { max-width: 100%; }
+    .nav-links { display: none; }
 }
